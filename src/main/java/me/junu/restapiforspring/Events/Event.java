@@ -2,6 +2,7 @@ package me.junu.restapiforspring.Events;
 
 import lombok.*;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Builder
@@ -9,7 +10,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter @Setter
 @EqualsAndHashCode(of = "id")
+@Entity
 public class Event {
+    @Id
+    @GeneratedValue
     private Long id;
     private String name;
     private String description;
@@ -23,5 +27,6 @@ public class Event {
     private int limitOfEnrollment;
     private boolean offline;
     private boolean free;
+    @Enumerated(EnumType.STRING)
     private EventStatus eventStatus;
 }
