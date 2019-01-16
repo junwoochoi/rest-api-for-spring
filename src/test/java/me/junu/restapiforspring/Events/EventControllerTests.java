@@ -65,4 +65,32 @@ public class EventControllerTests {
                 .andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()));
     }
 
+
+    @Test
+    public void createEvent_Bad_Request() throws Exception {
+        Event event = Event.builder()
+                .name("Spring")
+                .description("REST API Development with Spring")
+                .beginEnrollmentDateTime(LocalDateTime.of(2019, 1, 11, 11, 11))
+                .closeEnrollmentDateTime(LocalDateTime.of(2019, 1, 12, 11, 11))
+                .beginEventDateTime(LocalDateTime.of(2019, 1, 13, 11, 11 ))
+                .endEventDateTime(LocalDateTime.of(2019, 1, 14, 11, 11 ))
+                .basePrice(100)
+                .maxPrice(200)
+                .limitOfEnrollment(100)
+                .location("강남역 D2 스타트업 팩토리")
+                .free(true)
+                .offline(false)
+                .eventStatus(EventStatus.PUBLISHED)
+                .build();
+        event.setId((long) 10);
+
+        mockMvc.perform(post("/api/events/")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaTypes.HAL_JSON)
+                .content(objectMapper.writeValueAsString(event)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
 }
