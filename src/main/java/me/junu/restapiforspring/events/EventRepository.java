@@ -1,4 +1,4 @@
-package me.junu.restapiforspring.Events;
+package me.junu.restapiforspring.events;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

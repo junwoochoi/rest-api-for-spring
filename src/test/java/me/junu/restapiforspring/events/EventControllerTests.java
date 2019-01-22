@@ -1,4 +1,4 @@
-package me.junu.restapiforspring.Events;
+package me.junu.restapiforspring.events;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.junu.restapiforspring.common.TestDescription;
@@ -57,7 +57,10 @@ public class EventControllerTests {
                 .andExpect(jsonPath("id").value(Matchers.not(10)))
                 .andExpect(jsonPath("free").value(false))
                 .andExpect(jsonPath("offline").value(true))
-                .andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()));
+                .andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()))
+                .andExpect(jsonPath("_links.self").exists())
+                .andExpect(jsonPath("_links.update-event").exists())
+                .andExpect(jsonPath("_links.query-events").exists());
     }
 
 
