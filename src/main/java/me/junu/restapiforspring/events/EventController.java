@@ -1,4 +1,4 @@
-package me.junu.restapiforspring.events;
+package me.junu.restapiforspring.Events;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

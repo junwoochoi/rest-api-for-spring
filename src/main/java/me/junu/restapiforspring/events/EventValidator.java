@@ -1,8 +1,9 @@
-package me.junu.restapiforspring.events;
+package me.junu.restapiforspring.Events;
 
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Component

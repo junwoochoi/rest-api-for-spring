@@ -1,4 +1,4 @@
-package me.junu.restapiforspring.events;
+package me.junu.restapiforspring.Events;
 
 import lombok.*;
 
