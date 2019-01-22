@@ -1,13 +1,16 @@
 package me.junu.restapiforspring.events;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import me.junu.restapiforspring.common.RestDocsConfiguration;
 import me.junu.restapiforspring.common.TestDescription;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -16,6 +19,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 
+import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -23,6 +31,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@AutoConfigureRestDocs
+@Import(RestDocsConfiguration.class)
 public class EventControllerTests {
 
     @Autowired
@@ -59,8 +69,51 @@ public class EventControllerTests {
                 .andExpect(jsonPath("offline").value(true))
                 .andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()))
                 .andExpect(jsonPath("_links.self").exists())
-                .andExpect(jsonPath("_links.update-event").exists())
-                .andExpect(jsonPath("_links.query-events").exists());
+                .andExpect(jsonPath("_links.update").exists())
+                .andExpect(jsonPath("_links.events").exists())
+                .andDo(document("create-event",
+                        links(
+                                linkWithRel("self").description("link to self"),
+                                linkWithRel("events").description("link to self"),
+                                linkWithRel("profile").description("link to profile"),
+                                linkWithRel("update").description("link to query")
+                        ),
+                        requestHeaders(
+                                headerWithName(HttpHeaders.CONTENT_TYPE).description("content type header"),
+                                headerWithName(HttpHeaders.ACCEPT).description("accept header")
+                        ),
+                        requestFields(
+                                fieldWithPath("name").description("name of new Event"),
+                                fieldWithPath("description").description("description of new Event"),
+                                fieldWithPath("beginEnrollmentDateTime").description("beginEnrollmentDateTime of new Event"),
+                                fieldWithPath("closeEnrollmentDateTime").description("closeEnrollmentDateTimeof new Event"),
+                                fieldWithPath("beginEventDateTime").description("beginEventDateTime of new Event"),
+                                fieldWithPath("endEventDateTime").description("endEventDateTime of new Event"),
+                                fieldWithPath("location").description("location of new Event"),
+                                fieldWithPath("basePrice").description("basePrice of new Event"),
+                                fieldWithPath("maxPrice").description("maxPrice of new Event"),
+                                fieldWithPath("limitOfEnrollment").description("Limit of Enrollment")
+                        ),
+                        responseHeaders(
+                                headerWithName(HttpHeaders.CONTENT_TYPE).description("content type header"),
+                                headerWithName(HttpHeaders.LOCATION).description("location header")
+                        ),
+                        relaxedResponseFields(
+                                fieldWithPath("id").description("id of new Event"),
+                                fieldWithPath("name").description("name of new Event"),
+                                fieldWithPath("description").description("description of new Event"),
+                                fieldWithPath("beginEnrollmentDateTime").description("beginEnrollmentDateTime of new Event"),
+                                fieldWithPath("closeEnrollmentDateTime").description("closeEnrollmentDateTimeof new Event"),
+                                fieldWithPath("beginEventDateTime").description("beginEventDateTime of new Event"),
+                                fieldWithPath("endEventDateTime").description("endEventDateTime of new Event"),
+                                fieldWithPath("location").description("location of new Event"),
+                                fieldWithPath("basePrice").description("basePrice of new Event"),
+                                fieldWithPath("maxPrice").description("maxPrice of new Event"),
+                                fieldWithPath("free").description("tells if event is free or not"),
+                                fieldWithPath("offline").description("tells if event is offline event or not"),
+                                fieldWithPath("eventStatus").description("event status")
+                        )
+                        ));
     }
 
 
