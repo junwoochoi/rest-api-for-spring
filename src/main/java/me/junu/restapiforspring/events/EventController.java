@@ -3,15 +3,13 @@ package me.junu.restapiforspring.events;
 import me.junu.restapiforspring.common.ErrorsResource;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.LinkBuilder;
-import org.springframework.hateoas.MediaTypes;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -28,6 +26,15 @@ public class EventController {
     ModelMapper modelMapper;
     @Autowired
     EventValidator eventValidator;
+
+    @GetMapping
+    public ResponseEntity queryEvents(Pageable pageable, PagedResourcesAssembler<Event> assembler){
+        Page<Event> page = this.eventRepository.findAll(pageable);
+        PagedResources<Resource<Event>> pagedResources = assembler.toResource(page, e-> new EventResource(e));
+        pagedResources.add(new Link("/docs/index.html#resources-events-list", "profile"));
+        return ResponseEntity.ok(pagedResources);
+    }
+
 
 
     @PostMapping
