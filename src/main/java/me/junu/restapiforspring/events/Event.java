@@ -1,6 +1,7 @@
 package me.junu.restapiforspring.events;
 
 import lombok.*;
+import me.junu.restapiforspring.accounts.Account;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -29,6 +30,9 @@ public class Event {
     private boolean free;
     @Enumerated(EnumType.STRING)
     private EventStatus eventStatus = EventStatus.DRAFT;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Account manager;
 
     public void update() {
         //Update free
