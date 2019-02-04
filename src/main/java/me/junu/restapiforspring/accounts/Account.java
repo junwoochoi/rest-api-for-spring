@@ -12,7 +12,7 @@ public class Account {
     @Id
     @GeneratedValue
     private Long id;
-
+    @Column(unique = true)
     private String email;
     private String password;
     @Enumerated(value = EnumType.STRING)

@@ -1,9 +1,11 @@
 package me.junu.restapiforspring.events;
 
+import lombok.extern.log4j.Log4j2;
 import me.junu.restapiforspring.accounts.Account;
 import me.junu.restapiforspring.accounts.AccountRepository;
 import me.junu.restapiforspring.accounts.AccountRole;
 import me.junu.restapiforspring.accounts.AccountService;
+import me.junu.restapiforspring.common.AppProperties;
 import me.junu.restapiforspring.common.BaseControllerTest;
 import me.junu.restapiforspring.common.TestDescription;
 import org.hamcrest.Matchers;
@@ -31,7 +33,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
 public class EventControllerTests extends BaseControllerTest {
 
 
@@ -44,11 +45,10 @@ public class EventControllerTests extends BaseControllerTest {
     @Autowired
     AccountService accountService;
 
-    @Before
-    public void setUp(){
-        eventRepository.deleteAll();
-        accountRepository.deleteAll();
-    }
+    @Autowired
+    AppProperties appProperties;
+
+
 
     @Test
     @TestDescription("정상적으로 이벤트를 생성하는 테스트")
@@ -132,25 +132,19 @@ public class EventControllerTests extends BaseControllerTest {
     }
 
     private String getAccessToken() throws Exception {
-        Account account = Account.builder()
-                .email("junwoo@naver.com")
-                .password("password")
-                .roles(Set.of(AccountRole.ADMIN, AccountRole.USER))
-                .build();
-        accountService.save(account);
 
 
-        String clientId = "myapp";
-        String clientSecret = "pass";
         ResultActions perform = mockMvc.perform(post("/oauth/token")
-                .with(httpBasic(clientId, clientSecret))
-                .param("username", "junwoo@naver.com")
-                .param("password", "password")
+                .with(httpBasic(appProperties.getClientId(), appProperties.getClientSecret()))
+                .param("username", appProperties.getUserUsername())
+                .param("password", appProperties.getUserPassword())
                 .param("grant_type", "password")
         );
 
-        MockHttpServletResponse response = perform.andReturn().getResponse();
+        MockHttpServletResponse response = perform.andDo(print()).andReturn().getResponse();
         String contents = response.getContentAsString();
+
+
         Jackson2JsonParser parser = new Jackson2JsonParser();
 
         return parser.parseMap(contents).get("access_token").toString();

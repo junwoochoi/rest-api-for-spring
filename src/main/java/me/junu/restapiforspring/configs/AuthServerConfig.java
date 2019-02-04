@@ -1,6 +1,7 @@
 package me.junu.restapiforspring.configs;
 
 import me.junu.restapiforspring.accounts.AccountService;
+import me.junu.restapiforspring.common.AppProperties;
 import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +26,8 @@ public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
     AccountService accountService;
     @Autowired
     TokenStore tokenStore;
+    @Autowired
+    AppProperties appProperties;
 
 
     @Override
@@ -35,8 +38,8 @@ public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
-                .withClient("myapp")
-                .secret(passwordEncoder.encode("pass"))
+                .withClient(appProperties.getClientId())
+                .secret(passwordEncoder.encode(appProperties.getClientSecret()))
                 .authorizedGrantTypes("password", "refresh_token")
                 .scopes("read","write")
                 .accessTokenValiditySeconds(10 * 60)

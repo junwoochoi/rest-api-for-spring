@@ -3,6 +3,7 @@ package me.junu.restapiforspring.configs;
 import me.junu.restapiforspring.accounts.Account;
 import me.junu.restapiforspring.accounts.AccountRole;
 import me.junu.restapiforspring.accounts.AccountService;
+import me.junu.restapiforspring.common.AppProperties;
 import me.junu.restapiforspring.common.BaseControllerTest;
 import me.junu.restapiforspring.common.TestDescription;
 import org.junit.Test;
@@ -22,25 +23,19 @@ public class AuthServerConfigTest extends BaseControllerTest {
 
     @Autowired
     AccountService accountService;
+    @Autowired
+    AppProperties appProperties;
 
     @Test
     @TestDescription("인증토큰 발급받는 테스트")
     public void getAuthToken() throws Exception {
-        //Given
-        Account account = Account.builder()
-                .email("junwoo@naver.com")
-                .password("password")
-                .roles(Set.of(AccountRole.ADMIN, AccountRole.USER))
-                .build();
-        accountService.save(account);
 
 
-        String clientId = "myapp";
-        String clientSecret = "pass";
+
         mockMvc.perform(post("/oauth/token")
-                .with(httpBasic(clientId, clientSecret))
-                .param("username", "junwoo @naver.com")
-                .param("password", "password")
+                .with(httpBasic(appProperties.getClientId(), appProperties.getClientSecret()))
+                .param("username", appProperties.getUserUsername())
+                .param("password", appProperties.getUserPassword())
                 .param("grant_type", "password")
         )
                 .andDo(print())
