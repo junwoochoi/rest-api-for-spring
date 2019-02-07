@@ -100,7 +100,6 @@ public class EventController {
         if(eventOptional.isEmpty()){
             return ResponseEntity.notFound().build();
         }
-
         Event event = eventOptional.get();
         modelMapper.map(eventDto, event);
         Event savedEvent = eventRepository.save(event);
