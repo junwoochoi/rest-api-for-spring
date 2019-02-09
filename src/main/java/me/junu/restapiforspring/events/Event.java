@@ -1,7 +1,9 @@
 package me.junu.restapiforspring.events;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 import me.junu.restapiforspring.accounts.Account;
+import me.junu.restapiforspring.accounts.AccountSerializer;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -32,6 +34,7 @@ public class Event {
     private EventStatus eventStatus = EventStatus.DRAFT;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JsonSerialize(using = AccountSerializer.class)
     private Account manager;
 
     public void update() {
